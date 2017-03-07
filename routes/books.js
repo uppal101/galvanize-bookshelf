@@ -13,6 +13,7 @@ router.get('/books', (req, res, next) => {
      res.send(books);
    })
    .catch((err) => {
+     res.sendStatus(404);
      next(err);
    });
 });
@@ -22,12 +23,13 @@ router.get('/books/:id', (req, res, next) => {
     .where('id', req.params.id)
     .first()
     .then((book) => {
-      if (!book) {
-        return next();
-      }
+    if (!book || req.params.id < 0 || req.params.id > books.length || Number.isNaN(req.params.id)) {
+      return next();
+    }
       res.send(book);
     })
     .catch((err) => {
+      res.sendStatus(404);
       next(err);
     });
 });
@@ -44,6 +46,9 @@ router.post('/books', (req, res, next) => {
       res.send(books[0]);
     })
     .catch((err) => {
+      if (req.body.title === null) {
+        res.sendStatus(400);
+      }
       next(err);
     });
 });
@@ -69,6 +74,7 @@ router.patch('/books/:id', (req, res, next) => {
       res.send(books[0]);
     })
     .catch((err) => {
+      res.sendStatus(404);
       next(err);
     });
 });
@@ -95,6 +101,7 @@ router.delete('/books/:id', (req, res, next) => {
       res.send(book);
     })
     .catch((err) => {
+      res.sendStatus(404);
       next(err);
     });
 });
