@@ -46,9 +46,7 @@ router.post('/books', (req, res, next) => {
       res.send(books[0]);
     })
     .catch((err) => {
-      if (req.body.title === null) {
-        res.sendStatus(400);
-      }
+      res.sendStatus(400);
       next(err);
     });
 });
