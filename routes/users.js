@@ -1,6 +1,8 @@
 'use strict';
 
 const express = require('express');
+const ev = require('express-validation');
+const validations = require('../validations/users');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -8,16 +10,16 @@ const bcrypt = require('bcrypt-as-promised');
 const knex = require('../knex');
 const camelizeKeys = require('humps');
 
-router.post('/users', (req, res, next) => {
-  if (!req.body.email) {
-    res.set('Content-type', 'text/plain');
-    return res.status(400).send('Email must not be blank');
-  }
-
-  if (!req.body.password || req.body.password < 8) {
-    res.set('Content-type', 'text/plain');
-    return res.status(400).send('Password must be at least 8 characters long');
-  }
+router.post('/users', ev(validations.post), (req, res, next) => {
+  // if (!req.body.email) {
+  //   res.set('Content-type', 'text/plain');
+  //   return res.status(400).send('Email must not be blank');
+  // }
+  //
+  // if (!req.body.password || req.body.password < 8) {
+  //   res.set('Content-type', 'text/plain');
+  //   return res.status(400).send('Password must be at least 8 characters long');
+  // }
   bcrypt.hash(req.body.password, 12)
         .then((hashed_password) => {
           return knex('users')

@@ -1,6 +1,8 @@
 'use strict';
 
 const express = require('express');
+const ev = require('express-validation');
+const validations = require('../validations/favorites');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -10,11 +12,11 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv').config();
 
-router.get('/favorites', (req, res, next) => {
-  if (req.cookies.token === undefined) {
-    res.set('Content-type', 'plain/text');
-    res.status(401).send('Unauthorized');
-  } else {
+router.get('/favorites', ev(validations.get), (req, res, next) => {
+  // if (req.cookies.token === undefined) {
+  //   res.set('Content-type', 'plain/text');
+  //   res.status(401).send('Unauthorized');
+  // } else {
     knex('favorites')
       .join('books', 'favorites.book_id', '=', 'books.id')
       .select('*', '*')
@@ -26,15 +28,14 @@ router.get('/favorites', (req, res, next) => {
         res.sendStatus(404);
         next(err);
       });
-  }
 });
 
-router.get('/favorites/:check', (req, res, next) => {
-  if (req.cookies.token === undefined) {
-    res.set('Content-type', 'plain/text');
-    res.status(401).send('Unauthorized');
-  }
-  else {
+router.get('/favorites/:check', ev(validations.get), (req, res, next) => {
+  // if (req.cookies.token === undefined) {
+  //   res.set('Content-type', 'plain/text');
+  //   res.status(401).send('Unauthorized');
+  // }
+  // else {
     knex('favorites')
       .join('books', 'favorites.book_id', '=', 'books.id')
       .select('*', '*')
@@ -48,15 +49,14 @@ router.get('/favorites/:check', (req, res, next) => {
         res.sendStatus(404);
         next(err);
       });
-  }
 });
 
-router.post('/favorites', (req, res, next) => {
-  if (req.cookies.token === undefined) {
-    res.set('Content-type', 'plain/text');
-    res.status(401).send('Unauthorized');
-  }
-  else {
+router.post('/favorites', ev(validations.post)(req, res, next) => {
+  // if (req.cookies.token === undefined) {
+  //   res.set('Content-type', 'plain/text');
+  //   res.status(401).send('Unauthorized');
+  // }
+  // else {
     const verifiedJwt = jwt.verify(req.cookies.token, process.env.JWT_KEY);
     const userId = verifiedJwt.user;
     knex('favorites')
@@ -72,14 +72,13 @@ router.post('/favorites', (req, res, next) => {
         res.sendStatus(404);
         next(err);
       });
-  }
 });
 
-router.delete('/favorites', (req, res, next) => {
-  if (req.cookies.token === undefined) {
-    res.set('Content-type', 'plain/text');
-    res.status(401).send('Unauthorized');
-  } else {
+router.delete('/favorites', ev(validations.delete), (req, res, next) => {
+  // if (req.cookies.token === undefined) {
+  //   res.set('Content-type', 'plain/text');
+  //   res.status(401).send('Unauthorized');
+  // } else {
     const verifiedJwt = jwt.verify(req.cookies.token, process.env.JWT_KEY);
     const userId = verifiedJwt.user;
     let book;
@@ -108,7 +107,6 @@ router.delete('/favorites', (req, res, next) => {
       .catch((err) => {
         next(err);
       });
-  }
 })
 
 module.exports = router;

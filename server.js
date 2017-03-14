@@ -12,6 +12,7 @@ app.disable('x-powered-by');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 const morgan = require('morgan');
+const Joi = require('joi');
 
 switch (app.get('env')) {
   case 'development':
@@ -51,10 +52,18 @@ app.use(favorites);
 app.use(token);
 app.use(users);
 
-app.use((_req, res) => {
-  res.sendStatus(404);
-});
+// app.use((_req, res) => {
+//   res.sendStatus(404);
+// });
 
+app.use((err, _req, res, _next) => {
+  if (err.status) {
+    return res.status(err.status).send(err);
+  }
+
+  console.error(err);
+  res.sendStatus(500);
+});
 // eslint-disable-next-line max-params
 app.use((err, _req, res, _next) => {
   if (err.output && err.output.statusCode) {

@@ -23,7 +23,7 @@ router.get('/books/:id', (req, res, next) => {
     .where('id', req.params.id)
     .first()
     .then((book) => {
-    if (!book || req.params.id < 0 || req.params.id > books.length || Number.isNaN(req.params.id)) {
+    if (!book || req.params.id < 0 || req.params.id > book.length || Number.isNaN(req.params.id)) {
       return next();
     }
       res.send(book);
