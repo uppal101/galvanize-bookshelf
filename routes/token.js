@@ -15,7 +15,8 @@ router.get('/token', (req, res) => {
   if (req.cookies.token === undefined) {
     res.set('Content-type', 'application/json');
     res.status(200).send('false');
-  } else {
+  }
+  else {
     res.set('Content-type', 'application/json');
     res.status(200).send('true');
   }
@@ -33,41 +34,44 @@ router.post('/token', (req, res, next) => {
   return knex('users')
     .where('email', req.body.email)
     .then((users) => {
-      let user = users[0];
-      if (!user) {
+      const user = users[0];
+
+      return bcrypt.compare(req.body.password, user.hashed_password)
+    })
+    .catch((err) => {
+      res.set('Content-type', 'plain/text');
+      res.status(400).send('Bad email or password');
+    })
+    .then((authOk) => {
+      return knex('users')
+        .where('email', req.body.email);
+    })
+    .then((users1) => {
+      if (!users1[0]) {
         res.set('Content-type', 'plain/text');
         res.status(400).send('Bad email or password');
-      } else {
-        return bcrypt.compare(req.body.password, user.hashed_password)
-        .then((res) => {
-          return res;
-        })
-        .catch((err) => {
-          res.set('Content-type', 'plain/text');
-          res.status(400).send('Bad email or password');
-        })
-        .then((authorizedUser) => {
-          delete users[0].hashed_password
-          const claims = {
-            user: users[0].id,
-            iss: 'https://localhost:8000'
-          };
-          const token = jwt.sign(claims, process.env.JWT_KEY);
+      }
+      else {
+        delete users1[0].hashed_password;
+        const claims = {
+          user: users1[0].id,
+          iss: 'https://localhost:8000'
+        };
+        const token = jwt.sign(claims, process.env.JWT_KEY);
 
-          res.cookie('token', token, {
-            httpOnly: true
-          });
-          res.send(camelizeKeys(users[0]));
+        res.cookie('token', token, {
+          httpOnly: true
         });
+        res.send(camelizeKeys(users1[0]));
       }
     })
     .catch((err) => {
       next(err);
-    })
+    });
 });
 
 router.delete('/token', (req, res) => {
-  res.clearCookie('token')
+  res.clearCookie('token');
   res.set('Content-type', 'application/json');
   res.status(200).send('true');
 });
