@@ -8,7 +8,7 @@ const validations = require('../validations/users');
 const router = express.Router();
 const bcrypt = require('bcrypt-as-promised');
 const knex = require('../knex');
-const camelizeKeys = require('humps');
+const { camelizeKeys, decamelizeKeys } = require('humps');
 
 router.post('/users', ev(validations.post), (req, res, next) => {
   // if (!req.body.email) {

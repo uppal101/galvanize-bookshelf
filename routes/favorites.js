@@ -12,7 +12,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv').config();
 
-router.get('/favorites', ev(validations.get), (req, res, next) => {
+router.get('/favorites', (req, res, next) => {
   // if (req.cookies.token === undefined) {
   //   res.set('Content-type', 'plain/text');
   //   res.status(401).send('Unauthorized');
@@ -30,7 +30,7 @@ router.get('/favorites', ev(validations.get), (req, res, next) => {
       });
 });
 
-router.get('/favorites/:check', ev(validations.get), (req, res, next) => {
+router.get('/favorites/:check', (req, res, next) => {
   // if (req.cookies.token === undefined) {
   //   res.set('Content-type', 'plain/text');
   //   res.status(401).send('Unauthorized');
@@ -51,7 +51,7 @@ router.get('/favorites/:check', ev(validations.get), (req, res, next) => {
       });
 });
 
-router.post('/favorites', ev(validations.post)(req, res, next) => {
+router.post('/favorites', ev(validations.post), (req, res, next) => {
   // if (req.cookies.token === undefined) {
   //   res.set('Content-type', 'plain/text');
   //   res.status(401).send('Unauthorized');
@@ -74,7 +74,7 @@ router.post('/favorites', ev(validations.post)(req, res, next) => {
       });
 });
 
-router.delete('/favorites', ev(validations.delete), (req, res, next) => {
+router.delete('/favorites', (req, res, next) => {
   // if (req.cookies.token === undefined) {
   //   res.set('Content-type', 'plain/text');
   //   res.status(401).send('Unauthorized');

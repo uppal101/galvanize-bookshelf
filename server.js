@@ -58,7 +58,10 @@ app.use(users);
 
 app.use((err, _req, res, _next) => {
   if (err.status) {
-    return res.status(err.status).send(err);
+    return res
+    .status(err.status)
+    .set('Content-type', 'text/plain')
+    .send(err);
   }
 
   console.error(err);

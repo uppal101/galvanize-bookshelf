@@ -1,6 +1,8 @@
 'use strict';
 
 const express = require('express');
+const ev = require('express-validation');
+const validations = require('../validations/token');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -21,15 +23,15 @@ router.get('/token', (req, res) => {
   }
 });
 
-router.post('/token', (req, res, next) => {
-  if (!req.body.email) {
-    res.set('Content-type', 'text/plain');
-    return res.status(400).send('Email must not be blank');
-  }
-  if (!req.body.password || req.body.password < 8) {
-    res.set('Content-type', 'text/plain');
-    return res.status(400).send('Password must not be blank');
-  }
+router.post('/token', ev(validations.post), (req, res, next) => {
+  // if (!req.body.email) {
+  //   res.set('Content-type', 'text/plain');
+  //   return res.status(400).send('Email must not be blank');
+  // }
+  // if (!req.body.password || req.body.password < 8) {
+  //   res.set('Content-type', 'text/plain');
+  //   return res.status(400).send('Password must not be blank');
+  // }
   return knex('users')
     .where('email', req.body.email)
     .then((users) => {
